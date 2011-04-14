@@ -295,7 +295,23 @@ if ( !class_exists( 'dealertrend_api' ) ) {
 
 				$this->parameters = array_merge( $parameters , $server_parameters );
 
-				$inventory = $this->get_inventory( $this->parameters );
+        $inventory = $this->get_inventory( $this->parameters );
+        //Theoretical fix for XSS injection coming in from the API
+        /*foreach ( $inventory as &$inventory_item ) {
+          if ( is_object( $inventory_item ) ) {
+            foreach ( $inventory_item as &$specific_inventory_item ) {
+              if ( is_object($specific_inventory_item) ) {
+                foreach ( $specific_inventory_item as &$edgecase_specific ) {
+                  $edgecase_specific = $this->sanitize_inputs( $edgecase_specific );
+                }
+              } else {
+                $specific_inventory_item = $this->sanitize_inputs( $specific_inventory_item );
+              }
+            }
+          } else {
+            $inventory_item = $this->sanitize_inputs( $inventory_item );
+          }
+        }*/
 
 				$start_inventory_display_timer = timer_stop();
 				$this->display_inventory( $inventory );
