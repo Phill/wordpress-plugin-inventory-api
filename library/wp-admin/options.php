@@ -30,6 +30,11 @@
 			$_POST[ 'api' ][ 'vehicle_reference_system' ] = preg_replace( '/^(https?:\/\/)?(.+)([^a-z])$/i' , '$2' , $_POST[ 'api' ][ 'vehicle_reference_system' ] );
 			$dealertrend_api->options[ 'company_information' ] = $_POST[ 'company_information' ];
 			$dealertrend_api->options[ 'api' ] = $_POST[ 'api' ];
+      
+      //Security against LFI, a directory (at least a themes directory) should never be located outside the /library/templates/inventory directory
+      $_POST[ 'template' ] = str_replace( '..' , '' , $_POST['template'] );
+      $dealertrend_api->options[ 'template' ] = ( is_dir( dirname( __FILE__ ) . '/../templates/inventory/' . $_POST[ 'template' ] ) ) ? $_POST[ 'template' ] : 'default';
+      
 			$dealertrend_api->save_options();
 		}
 	}
@@ -149,6 +154,35 @@
 					<td width="200"><small>Pulls inventory from a specific dealership.</small></td>
 					<td><small>Inventory will not be retreived without providing a valid company ID from <?php echo $site_link; ?></small></td>
 				</tr>
+			</table>
+      <table width="450">
+				<tr>
+					<td colspan="2">
+						<h3 class="title">Theme</h3>
+					</td>
+				</tr>
+        <tr>
+          <td>
+            <select name="template">
+              <?php
+              $directories = scandir(dirname( __FILE__ ) . '/../templates/inventory');
+              foreach ($directories as $directory) {
+                $directory_handle = opendir( dirname( __FILE__ ) . '/../templates/inventory/' . $directory );
+                if ( $directory_handle ) {
+                  if ( '.' !== $directory && '..' !== $directory &&  'js' !== $directory ) {
+                    if ( $dealertrend_api->options[ 'template' ] === $directory ) {
+                      echo '<option value=\'' . $directory . '\' selected=\'selected\'>' . $directory . '</option>';
+                    } else {
+                      echo '<option value=\'' . $directory . '\'>' . $directory . '</option>';
+                    }
+                    closedir($directory_handle);
+                  }
+                }
+              }
+              ?>
+            </select>
+          </td>
+        </tr>
 				<tr>
 					<td>
 						<input type="hidden" name="action" value="update" />
@@ -159,7 +193,7 @@
 					<td>
 						<button id="uninstall" name="uninstall" value="true">Perform Clean Uninstall</button>
 					</td>
-				</tr>
+        </tr>
 			</table>
 		</form>
 	</div>
