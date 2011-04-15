@@ -405,8 +405,11 @@ if ( !class_exists( 'dealertrend_api' ) ) {
 		function front_styles() {
 
 			$template_name = $this->options[ 'template' ];
-			wp_register_style( 'dealertrend-api-inventory' , $this->plugin_meta_data[ 'BaseURL' ] . '/library/templates/inventory/' . $template_name . '/style.css' , false , $this->plugin_meta_data[ 'Version' ] );
-			wp_enqueue_style( 'dealertrend-api-inventory' );
+      wp_register_style( 'dealertrend-api-inventory-mobile' , $this->plugin_meta_data[ 'BaseURL' ] . '/library/templates/inventory/' . $template_name . '/mobile.css', false , $this->plugin_meta_data[ 'Version' ] , 'handheld, screen and (max-device-width: 900px)' );
+			wp_enqueue_style( 'dealertrend-api-inventory-mobile' );
+      
+      wp_register_style( 'dealertrend-api-inventory' , $this->plugin_meta_data[ 'BaseURL' ] . '/library/templates/inventory/' . $template_name . '/style.css' , false , $this->plugin_meta_data[ 'Version' ] );
+      wp_enqueue_style( 'dealertrend-api-inventory' );
 
 			wp_register_Style( 'jquery-ui-black-tie' , 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/themes/black-tie/jquery-ui.css', false , '1.8.1' );
 			wp_enqueue_style( 'jquery-ui-black-tie' );
